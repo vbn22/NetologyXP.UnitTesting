@@ -20,16 +20,16 @@
 // client class
 
 class Client {
-    constructor(should) {
-        this._should = should;
+    constructor(debtor) {
+        this._debtor = debtor;
     };
 
-    get should() {
-        return this._should;
+    get debtor() {
+        return this._debtor;
     };
 
     canGetFilm(){
-        if (!this.should){
+        if (!this.debtor){
             return true;
         } else {
             return false;
@@ -58,46 +58,43 @@ class Client {
 
 suite('Client In Video Rental', function () {
     let client = Client();
-    let shouldClient = Client(true);
+    let debtorClient = Client(true);
 
-    // Клиент может получить фильм в прокате
-    // clientCanGetFilm_Always
-
-
+    // ClientGetFilmShould.clientCanGetFilrm_Always - так как результат true false
+    // и возможно перечислить несколько вариантов
     suite('ClientGetFilmShould', function () {
         test("clientCanGetFilrm_Always", function () {
             assert.equal(true, client.canGetFilm());
         });
     });
 
-    suite('WhenClientGet_2_Films', function () {
-        test("DiscountIs_10", function () {
+    // Клиент может взять несколько фильмов и получить скидку 5% за каждый, но не более 15%
+    // WhenClientGetFilm.Discount - так как может быть несколько случаев эффекта
+    // когда клиент берет видео в прокате
+    
+    suite('WhenClientGetFilms', function () {
+        test("GetDiscount", function () {
             assert.equal(10, client.getDiscountPriceForFilms(2));
         });
-    });
-    
-    suite('WhenClientGet_5_Films', function () {
-        test("DiscountIs_15_%", function () {
+        test("MaxDiscount", function () {
             assert.equal(15, client.getDiscountPriceForFilms(5));
         });
         test("ClientGetPreesent%", function () {
             assert.equal(true, client.present);
         });
-    });
-    
-    suite('ClientGetMAX_5_Films', function () {
-        test("ForOneClient", function () {
+        test("MaxFilmForOneClient", function () {
             assert.equal(5, client.getFilms(7));
         });
     });
-
+    
+    //ClientDidNOTGetFilm.ClientIsDebtor - несколько случаев когда клиент не может взять фильм
     suite('ClientDidNOTGetFilm', function () {
-        test("ClientIsShould", function () {
-            assert.equal(false, shouldClient.canGetFilm());
+        test("ClientIsDebtor", function () {
+            assert.equal(false, debtorClient.canGetFilm());
         });
         
         test("TodayIsHoliday", function () {
-            assert.equal(false, shouldClient.canGetFilm());
+            assert.equal(false, debtorClient.canGetFilm());
         });
     });
 
@@ -115,6 +112,20 @@ suite('Client In Video Rental', function () {
             assert.equal(true, client.present);
         });
     });
-    
-    
+
+    // Если клиент новый - заполнить анкету/профиль
+    suite('WhenClientIsNew', function () {
+        test("CreateProfile", function () {
+            assert.equal('created', client.createProfile());
+        });
+    });
+
+
+    // Если фильм потерян - клиент должен заплатить 25$
+    suite('WhenClientLostFilm', function () {
+        test("PaidPenalty", function () {
+            assert.equal(25, client.penalties());
+        });
+    });
+
 });
